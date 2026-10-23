@@ -85,6 +85,22 @@ opencode auth list       # credenciais
 opencode serve           # servidor v2
 ```
 
+## Atualização e monitoramento
+
+O binário Android vem do [guysoft/opencode-termux](https://github.com/guysoft/opencode-termux), não do
+upstream (que publica só glibc/musl). ⚠️ **Não use `opencode upgrade`** — ele baixa o binário oficial e
+quebra no Termux.
+
+```bash
+./check-updates.sh   # compara instalado x upstream x guysoft (sai 1 se houver deriva)
+./update.sh          # atualiza para a última release Android do guysoft (sha256 verificado)
+./update.sh --check  # dry-run
+```
+
+Fluxo: rode `./check-updates.sh` periodicamente. Quando o upstream estiver à frente, aguarde (ou cobre)
+uma nova release do guysoft e rode `./update.sh`. O catálogo de modelos do plano Go atualiza sozinho
+(`opencode models`); no pi, rode `pi update --models`.
+
 ## Créditos
 
 - [OpenCode](https://opencode.ai) — upstream: [anomalyco/opencode](https://github.com/anomalyco/opencode)
