@@ -40,6 +40,7 @@ fi
 
 # Já está na última? (compara tag sem o prefixo 'v' com a versão dpkg)
 tag_ver="${TAG#v}"
+tag_ver="${tag_ver//-/}"   # guysoft sanitiza o pkgver removendo hífens (v1.0.3-rc3 -> 1.0.3rc3)
 if [ "$installed" = "$tag_ver" ]; then
   echo "[*] Já está na última versão ($tag_ver). Nada a fazer."
   exit 0

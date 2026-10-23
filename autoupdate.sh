@@ -39,6 +39,7 @@ for r in json.load(sys.stdin):
         print(r["tag_name"]); break
 ' 2>/dev/null || true)"
 tag_ver="${latest_tag#v}"
+tag_ver="${tag_ver//-/}"
 
 # --- derivações ---
 update_available=0
