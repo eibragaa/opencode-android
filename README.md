@@ -95,11 +95,25 @@ quebra no Termux.
 ./check-updates.sh   # compara instalado x upstream x guysoft (sai 1 se houver deriva)
 ./update.sh          # atualiza para a última release Android do guysoft (sha256 verificado)
 ./update.sh --check  # dry-run
+./autoupdate.sh      # espelha o autoupdate do opencode (notify|auto|off)
 ```
 
 Fluxo: rode `./check-updates.sh` periodicamente. Quando o upstream estiver à frente, aguarde (ou cobre)
 uma nova release do guysoft e rode `./update.sh`. O catálogo de modelos do plano Go atualiza sozinho
 (`opencode models`); no pi, rode `pi update --models`.
+
+### Como o opencode CLI faz (referência)
+
+O opencode nativo tem a opção **`autoupdate`** no `opencode.json`:
+
+- `true` (padrão) — baixa e instala a atualização ao iniciar
+- `"notify"` — apenas avisa quando há versão nova
+- `false` — desliga
+
+Como no Termux isso quebraria (baixaria o binário oficial glibc), espelhamos o mesmo comportamento com
+`autoupdate.sh`, controlado por **`OPENCODE_AUTOUPDATE`** (`notify` por padrão, `auto`, `off`) ou pelo
+arquivo `~/.config/opencode/autoupdate`. O `~/.bashrc` tem um hook que roda `autoupdate.sh` **uma vez por
+sessão** ao entrar no diretório do projeto (`cd ~/opencode-android`).
 
 ## Créditos
 
