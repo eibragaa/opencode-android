@@ -66,27 +66,67 @@ opencode web              # interface web
 opencode agent            # gerenciamento de agentes
 ```
 
-## Configuração de provedor
+## Configuração de provedor (plano Go / fronteira+flash)
 
-Defina a chave de API como variável de ambiente:
+O **OpenCode 2** (`opencode2`) tem o provedor nativo **OpenCode Go**, que envia
+automaticamente o header de sessão exigido pelo plano. Autentique com a sua chave do
+[console OpenCode](https://opencode.ai/auth):
 
 ```bash
-export ANTHROPIC_API_KEY="sua-chave"
-# ou
-export OPENAI_API_KEY="sua-chave"
+# 1. Registra a chave no ambiente do serviço em background
+opencode2 service set env OPENCODE_API_KEY "oc_sk_..."
+opencode2 service restart
+
+# 2. (alternativa interativa) login com a chave
+opencode2 auth login opencode-go --method key
+
+# 3. Confirma
+opencode2 auth list      # deve mostrar: OpenCode Go  OPENCODE_API_KEY  environment
+opencode2 models         # lista o catálogo do plano Go (deepseek-v4-pro, kimi-k3, gpt-6-luna, ...)
 ```
 
-Ou autentique de forma interativa:
+Copie `opencode.example.json` para `~/.config/opencode/opencode.json` para espelhar a
+estratégia fronteira/flash:
+
+| Papel | Modelo |
+|---|---|
+| `model` (padrão) | `opencode-go/deepseek-v4-pro` (fronteira) |
+| `small_model` → título | `opencode-go/deepseek-v4.1-flash` (flash) |
+| agente `plan` | `opencode-go/deepseek-v4-pro` (fronteira) |
+| agente `build` | `opencode-go/deepseek-v4.1-flash` (flash) |
+
+> O v1 (`opencode`, free tier) também aceita `OPENCODE_API_KEY`, mas expõe apenas os
+> modelos gratuitos. O plano Go (modelos de fronteira pagos) exige o `opencode2`.
+
+## Como usar
 
 ```bash
-opencode auth login
-# ou
-opencode providers
+opencode2                 # abre a TUI (Tab alterna build/plan)
+opencode2 run "mensagem"  # execução headless
+opencode2 models          # lista modelos
+opencode2 auth list       # credenciais
+opencode2 serve           # servidor v2
+```
+
+Legado (v1):
+
+```bash
+opencode                  # abre a TUI do v1
+opencode run "mensagem"   # execução headless
+opencode models           # lista os modelos
+opencode providers        # autenticação / gerenciamento de provedores
+opencode serve            # sobe o servidor
+opencode web              # interface web
+opencode agent            # gerenciamento de agentes
 ```
 
 ## Nota sobre versões
 
-O upstream também mantém uma pré-release **v2** (`opencode2`), baseada no alvo Android oficial do Bun com correção de seccomp. Este repositório **fixa a v1 em 1.17.9** por estabilidade.
+Há dois binários, instalados lado a lado:
+
+- **`opencode` (v1, 1.17.9)** — estável, TUI clássica. Só expõe os modelos gratuitos do provedor `opencode`.
+- **`opencode2` (v2, 2.0.0-android-termux.2)** — preview com o provedor nativo **OpenCode Go**
+  (suporta o plano pago de fronteira/flash, com header de sessão e fix de seccomp). É o caminho recomendado aqui.
 
 ## Créditos
 
